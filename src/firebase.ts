@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { get, getDatabase, ref, update } from "firebase/database"; // Adiciona "get" aqui
 
-import { config } from "./config";
+import { config } from "./config/config";
 import { Transaction } from "./message-processor/message-processor";
+import { logger } from "./config/logger";
 
 const app = initializeApp(config.firebase);
 const database = getDatabase(app);
@@ -18,14 +19,15 @@ export async function getMessageFromFirebase({ amount, contact, date, id }: Tran
       snapshot.val().idTransacao.replace(/\./g, "_") == id &&
       snapshot.val().estado.toString() === "false";
 
-    if (!isValidTransaction) return { success: false, error: "Transacção inválida" };
-
+    if (!isValidTransaction) {
+      logger.info(`Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${snapshot.val()}`);
+      return { success: false, error: "Transacção inválida" };
+    }
     const updatedData = { estado: true, contacto: contact };
     await update(ref(database, id + "/" + id), updatedData);
-    const message = snapshot.val().mensagem;
-    return { success: true, message };
+    return { success: true };
   } catch (error) {
-    console.error("Erro ao buscar dados no Firebase:", error);
+    logger.error(`Erro ao buscar dados no Firebase: ${error}`);
     const e = error as Error;
     return { success: false, error: e.message };
   }
@@ -34,7 +36,6 @@ export async function getMessageFromFirebase({ amount, contact, date, id }: Tran
 type Result =
   | {
       success: true;
-      message: string;
     }
   | {
       success: false;

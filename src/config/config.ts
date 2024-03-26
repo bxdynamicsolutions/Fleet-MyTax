@@ -1,5 +1,6 @@
 import * as dotenv from "dotenv";
 import { z } from "zod";
+import { logger } from "./logger";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ type Config = z.infer<typeof configSchema>;
 const validateConfig = (config: any): Config => {
   const parsedConfig = configSchema.safeParse(config);
   if (!parsedConfig.success) {
+    logger.error("Invalid Configuration:" + parsedConfig.error);
     throw new Error("Invalid configuration: " + parsedConfig.error);
   }
   return parsedConfig.data;

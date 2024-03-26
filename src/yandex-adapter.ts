@@ -1,7 +1,8 @@
 import axios from "axios";
 import https from "https";
 
-import { config } from "./config";
+import { config } from "./config/config";
+import { randomUUID } from "crypto";
 
 const api = axios.create({
   timeout: 1200000,
@@ -40,7 +41,7 @@ export async function createFleetTransaction(contact: string, amount: number, co
         driver_profile_id: profileId,
         park_id: config.fleet.parkId,
       },
-      { headers: { "X-Idempotency-token": code } },
+      { headers: { "X-Idempotency-token": code + randomUUID() } },
     );
     return { success: depositResponse.status === 200 };
   } catch (error) {
