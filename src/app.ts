@@ -28,15 +28,29 @@ app.post("/whatsapp", async (req, res) => {
   const result = await validateTransaction(transaction);
   if (!result.success) {
     logger.info(result.error);
-    logger.info("A recarga já foi usada, alterada ou inválida!");
-    WA.sendMessage("A recarga já foi usada, alterada ou inválida!", senderID);
+    const errorMessage =
+      `Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:
+
+ID da transação PP240323.0000.X69538. Transferiste 150 MT para 873528154 às 11:45:21 23/03/2024. Taxa: 0.0 MT. Saldo total 2.00 MT. Conteúdo: Recarga. Acesse o aplicativo e-Mola para facilitar e flexibilizar, nome: Alberto Elias nas transações. Baixe no Google Play e na App Store para acessar nossos serviços. Obrigado! Now Movitel! Contato: 8********
+
+Por favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga.
+Caso o problema persista, a recarga pode ter sido usada ou adulterada!
+Em caso de dúvidas, entre em contacto com o suporte!
+`.trimStart();
+    logger.info(errorMessage);
+    WA.sendMessage(errorMessage, senderID);
     return res.status(200).send();
   }
 
   const createResult = await createFleetTransaction(transaction.contact, transaction.amount, transaction.id);
   if (!createResult.success) {
-    logger.info("A recarga já foi usada, alterada ou inválida!");
-    WA.sendMessage("A recarga já foi usada, alterada ou inválida!", senderID);
+    logger.info(
+      "Ocorreu um erro durante o recarregamento. Por favor, tente novamente!\n Se o problema persistir, entre em contacto com o suporte!",
+    );
+    WA.sendMessage(
+      "Ocorreu um erro durante o recarregamento. Por favor, tente novamente!\n Se o problema persistir, entre em contacto com o suporte!",
+      senderID,
+    );
     return res.status(200).send();
   }
   await markTransactionAsCompleted(transaction);

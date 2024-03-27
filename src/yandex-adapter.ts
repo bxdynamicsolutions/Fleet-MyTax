@@ -3,6 +3,7 @@ import https from "https";
 
 import { config } from "./config/config";
 import { randomUUID } from "crypto";
+import { logger } from "./config/logger";
 
 const api = axios.create({
   timeout: 1200000,
@@ -43,10 +44,17 @@ export async function createFleetTransaction(contact: string, amount: number, co
       },
       { headers: { "X-Idempotency-token": code + randomUUID() } },
     );
+    if (depositResponse.status !== 200) {
+      logger.warn({
+        status: depositResponse.status,
+        statusText: depositResponse.statusText,
+        data: depositResponse.data,
+      });
+    }
     return { success: depositResponse.status === 200 };
   } catch (error) {
     const e = error as Error;
-    console.log(e.message);
+    logger.error(e);
     return { success: false, error: e.message };
   }
 }
