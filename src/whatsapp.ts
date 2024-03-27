@@ -8,7 +8,7 @@ const client = twilio(config.twilio.accountSid, config.twilio.authToken, { lazyL
 // Function to send message to WhatsApp
 const sendMessage = async (message: string, to: string): Promise<void> => {
   try {
-    logger.info(`WA_MESSAGE: ${{ to, message }}`);
+    logger.info(`WA_MESSAGE: ${JSON.stringify({ to, message })}`);
     await client.messages.create({
       to,
       body: message,

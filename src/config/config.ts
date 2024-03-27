@@ -60,5 +60,5 @@ export const config: Config = validateConfig({
     clientId: process.env.FLEET_CLIENT_ID,
     paymentCategory: process.env.FLEET_PAYMENT_CATEGORY,
   },
-  port: 5000,
+  port: Number(process.env.PORT ?? 5000),
 });
