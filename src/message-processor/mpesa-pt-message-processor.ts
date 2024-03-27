@@ -25,4 +25,8 @@ export class MPesaPtMessageProcessor implements MessageProcessor {
       contact: contacto,
     };
   }
+
+  getExampleMessage(): string {
+    return "Confirmado BCR4CMUJ7R2. Transferiste 111.00MT e a taxa foi de 0.00MT para 850368938 ALBERTO aos 27/3/24 as 9:23 PM. O teu novo saldo M-Pesa e de 6.08MT. Em caso de duvida, liga 100. • M-Pesa e facil! Contacto: 8********";
+  }
 }

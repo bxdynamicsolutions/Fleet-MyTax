@@ -1,5 +1,6 @@
 export interface MessageProcessor {
   process(message: string): Transaction;
+  getExampleMessage(): string;
 }
 
 export type Transaction = {

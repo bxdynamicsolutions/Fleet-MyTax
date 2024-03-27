@@ -24,4 +24,8 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
       contact: contacto,
     };
   }
+
+  getExampleMessage(): string {
+    return "ID da transação PP240323.0000.X69538. Transferiste 150 MT para 873528154 às 11:45:21 23/03/2024. Taxa: 0.0 MT. Saldo total 2.00 MT. Conteúdo: Recarga. Acesse o aplicativo e-Mola para facilitar e flexibilizar, nome: Alberto Elias nas transações. Baixe no Google Play e na App Store para acessar nossos serviços. Obrigado! Now Movitel! Contato: 8********";
+  }
 }

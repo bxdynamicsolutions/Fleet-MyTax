@@ -7,6 +7,7 @@ import { createFleetTransaction } from "./yandex-adapter";
 import { WA } from "./whatsapp";
 import { logger } from "./config/logger";
 import { pinoHttp } from "pino-http";
+import { MessageProcessor } from "./message-processor/message-processor";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -31,7 +32,7 @@ app.post("/whatsapp", async (req, res) => {
     const errorMessage =
       `Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:
 
-ID da transação PP240323.0000.X69538. Transferiste 150 MT para 873528154 às 11:45:21 23/03/2024. Taxa: 0.0 MT. Saldo total 2.00 MT. Conteúdo: Recarga. Acesse o aplicativo e-Mola para facilitar e flexibilizar, nome: Alberto Elias nas transações. Baixe no Google Play e na App Store para acessar nossos serviços. Obrigado! Now Movitel! Contato: 8********
+${processor.getExampleMessage()}
 
 Por favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga.
 Caso o problema persista, a recarga pode ter sido usada ou adulterada!
@@ -59,7 +60,7 @@ Em caso de dúvidas, entre em contacto com o suporte!
   res.status(200).send();
 });
 
-function getProcessor(message: string) {
+function getProcessor(message: string): MessageProcessor | null {
   // Lógica de extração EMOLA
   if (message.substring(0, 2) === "ID") {
     return new EmolaPtMessageProcessor();
