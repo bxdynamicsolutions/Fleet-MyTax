@@ -1,5 +1,5 @@
 import express from "express";
-import { getMessageFromFirebase } from "./firebase";
+import { markTransactionAsCompleted, validateTransaction } from "./firebase";
 import { EmolaPtMessageProcessor } from "./message-processor/emola-message-processor";
 import { MPesaEnMessageProcessor } from "./message-processor/mpesa-en-message-processor";
 import { MPesaPtMessageProcessor } from "./message-processor/mpesa-pt-message-processor";
@@ -25,7 +25,7 @@ app.post("/whatsapp", async (req, res) => {
   }
   const transaction = processor.process(message);
   // Buscar dados adicionais no Firebase
-  const result = await getMessageFromFirebase(transaction);
+  const result = await validateTransaction(transaction);
   if (!result.success) {
     logger.info(result.error);
     logger.info("A recarga já foi usada, alterada ou inválida!");
@@ -39,7 +39,7 @@ app.post("/whatsapp", async (req, res) => {
     WA.sendMessage("A recarga já foi usada, alterada ou inválida!", senderID);
     return res.status(200).send();
   }
-
+  await markTransactionAsCompleted(transaction);
   logger.info(`Conta Recarregada: ${req.body}`);
   WA.sendMessage("Conta recarregada!", senderID);
   res.status(200).send();
@@ -51,7 +51,7 @@ function getProcessor(message: string) {
     return new EmolaPtMessageProcessor();
   } else if (message.startsWith("Confirmado")) {
     return new MPesaPtMessageProcessor();
-  } else if (message.startsWith("B")) {
+  } else if (message.startsWith("B") && message.trim().split(" ")[0].length === 11) {
     return new MPesaEnMessageProcessor();
   }
   return null;

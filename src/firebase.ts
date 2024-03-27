@@ -8,7 +8,13 @@ import { logger } from "./config/logger";
 const app = initializeApp(config.firebase);
 const database = getDatabase(app);
 
-export async function getMessageFromFirebase({ amount, contact, date, id }: Transaction): Promise<Result> {
+export async function markTransactionAsCompleted({ id, contact }: Transaction): Promise<void> {
+  const firebaseRef = ref(database, id + "/" + id);
+  const updatedData = { estado: true, contacto: contact };
+  await update(firebaseRef, updatedData);
+}
+
+export async function validateTransaction({ amount, contact, date, id }: Transaction): Promise<Result> {
   try {
     const firebaseRef = ref(database, id + "/" + id);
     const snapshot = await get(firebaseRef);
@@ -20,11 +26,11 @@ export async function getMessageFromFirebase({ amount, contact, date, id }: Tran
       snapshot.val().estado.toString() === "false";
 
     if (!isValidTransaction) {
-      logger.info(`Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${snapshot.val()}`);
+      logger.info(
+        `Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(snapshot.val())}`,
+      );
       return { success: false, error: "Transacção inválida" };
     }
-    const updatedData = { estado: true, contacto: contact };
-    await update(ref(database, id + "/" + id), updatedData);
     return { success: true };
   } catch (error) {
     logger.error(`Erro ao buscar dados no Firebase: ${error}`);
