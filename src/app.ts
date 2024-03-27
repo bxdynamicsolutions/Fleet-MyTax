@@ -40,7 +40,7 @@ app.post("/whatsapp", async (req, res) => {
     return res.status(200).send();
   }
   await markTransactionAsCompleted(transaction);
-  logger.info(`Conta Recarregada: ${req.body}`);
+  logger.info(`Conta Recarregada: ${JSON.stringify(req.body)}`);
   WA.sendMessage("Conta recarregada!", senderID);
   res.status(200).send();
 });
