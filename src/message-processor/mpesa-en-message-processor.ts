@@ -5,7 +5,7 @@ export class MPesaEnMessageProcessor implements MessageProcessor {
     const regexId = /(\w+) Confirmed/;
     const regexValor = /\b(\d+\.\d{2})MT\b/;
     const regexData = /(\d{1,2}\/\d{1,2}\/\d{2,4} at \d{1,2}:\d{2} [APMapm]{2})/;
-    const regexContacto = /Contacto: (\d+)/;
+    const regexContacto = /\s*(\d{9})\s*$/;
 
     const idMatch = mensagem.match(regexId);
     const valorMatch = mensagem.match(regexValor);

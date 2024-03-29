@@ -23,7 +23,8 @@ export async function validateTransaction({ amount, contact, date, id }: Transac
       snapshot.val().dataRecarga == date &&
       snapshot.val().valorRecarga == Math.floor(amount) &&
       snapshot.val().idTransacao.replace(/\./g, "_") == id &&
-      snapshot.val().estado.toString() === "false";
+      snapshot.val().estado.toString() === "false" &&
+      snapshot.val().valorRecarga >= 100;
 
     if (!isValidTransaction) {
       logger.info(

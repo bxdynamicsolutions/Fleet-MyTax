@@ -9,7 +9,7 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
     const matcherValor = mensagem.match(padraoValor);
     const padraoHoraData = /as (\d{1,2}:\d{2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2,4})/;
     const matcherHoraData = mensagem.match(padraoHoraData);
-    const contatoMatch = /Contacto: (\d+)/;
+    const contatoMatch = /\s*(\d{9})\s*$/;
     const matcherContato = mensagem.match(contatoMatch);
 
     const id = matcherIdTransacao ? matcherIdTransacao[1].replace(/\./g, "_") : "DiversosEmola";
