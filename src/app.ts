@@ -1,6 +1,7 @@
 import express from "express";
 import { markTransactionAsCompleted, validateTransaction } from "./firebase";
-import { EmolaPtMessageProcessor } from "./message-processor/emola-message-processor";
+import { EmolaPtMessageProcessor } from "./message-processor/emola-pt-message-processor";
+import { EmolaEnMessageProcessor } from "./message-processor/emola-en-message-processor";
 import { MPesaEnMessageProcessor } from "./message-processor/mpesa-en-message-processor";
 import { MPesaPtMessageProcessor } from "./message-processor/mpesa-pt-message-processor";
 import { createFleetTransaction } from "./yandex-adapter";
@@ -64,7 +65,9 @@ function getProcessor(message: string): MessageProcessor | null {
   // Lógica de extração EMOLA
   if (message.substring(0, 2) === "ID") {
     return new EmolaPtMessageProcessor();
-  } else if (message.startsWith("Confirmado")) {
+  } else if (message.startsWith("Transaction")) {
+    return new EmolaEnMessageProcessor();
+  }else if (message.startsWith("Confirmado")) {
     return new MPesaPtMessageProcessor();
   } else if (message.startsWith("B") && message.trim().split(" ")[0].length === 11) {
     return new MPesaEnMessageProcessor();
