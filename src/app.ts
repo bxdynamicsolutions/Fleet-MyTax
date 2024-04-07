@@ -13,6 +13,10 @@ const wwebVersion = "2.2407.3";
 const client = new Client({
   authStrategy: new LocalAuth(),
   // proxyAuthentication: { username: 'username', password: 'password' },
+  puppeteer: {
+    args: ["--no-sandbox"],
+    headless: true,
+  },
   webVersionCache: {
     type: "remote",
     remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
