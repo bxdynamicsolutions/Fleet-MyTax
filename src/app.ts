@@ -11,6 +11,8 @@ import qrcode from 'qrcode-terminal';
 const wwebVersion = "2.2407.3";
 
 const client = new Client({
+  authStrategy: new LocalAuth(),
+  // proxyAuthentication: { username: 'username', password: 'password' },
   webVersionCache: {
     type: "remote",
     remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`,
@@ -42,10 +44,6 @@ client.on("ready", () => {
 client.on("message", async msg => {
   let message = msg.body;
   let senderID = msg.from;
-  if (!senderID.startsWith('258876512387')){
-    logger.info("Not a message from Explicador!")
-    return;
-  }
   logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
   try {
     const processor = getProcessor(message);
