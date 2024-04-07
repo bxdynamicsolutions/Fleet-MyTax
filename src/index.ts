@@ -1,7 +1,7 @@
+import "./config/node-exception-handler";
 import { exitSignals, ExitStatus } from "./config/constants";
 import { logger } from "./config/logger";
-import { app } from "./app";
-import { config } from "./config/config";
+import { client } from "./app";
 
 const exitWithError = (error: any) => {
   logger.error(`App exited with error: ${error}`);
@@ -10,14 +10,12 @@ const exitWithError = (error: any) => {
 
 const main = async () => {
   try {
-    const currentApp = app.listen(config.port, () => logger.info(`server started on port: ${config.port}`));
-
+    await client.initialize();
+    logger.info("Client Initialized.");
     for (const exitSignal of exitSignals) {
       process.on(exitSignal, async () => {
         try {
-          await new Promise((resolve, reject) => {
-            currentApp.close(error => (error ? reject(error) : resolve(true)));
-          });
+          await client.destroy();
           logger.info("App exited with success");
           process.exit(ExitStatus.Success);
         } catch (error) {
@@ -26,6 +24,7 @@ const main = async () => {
       });
     }
   } catch (error) {
+    console.error(error)
     exitWithError(error);
   }
 };
