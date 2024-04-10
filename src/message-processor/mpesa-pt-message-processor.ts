@@ -20,9 +20,9 @@ export class MPesaPtMessageProcessor implements MessageProcessor {
 
     return {
       id,
-      amount: Number(valorRecarga),
+      amount: Number(valorRecarga.replace(",", "")),
       date: dataRecarga,
-      contact: contacto.replace(",", ""),
+      contact: contacto,
     };
   }
 
