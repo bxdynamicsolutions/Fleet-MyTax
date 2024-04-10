@@ -3,7 +3,7 @@ import { MessageProcessor, Transaction } from "./message-processor";
 export class MPesaEnMessageProcessor implements MessageProcessor {
   process(mensagem: string): Transaction {
     const regexId = /(\w+) Confirmed/;
-    const regexValor = /\b(\d+\.\d{2})MT\b/;
+    const regexValor = /\b(\d*([\d\,]*)\.?\d+)MT\b/; 
     const regexData = /(\d{1,2}\/\d{1,2}\/\d{2,4} at \d{1,2}:\d{2} [APMapm]{2})/;
     const regexContacto = /\s*(\d{9})\s*$/;
 
