@@ -8,7 +8,7 @@ import { Client, LocalAuth } from "whatsapp-web.js";
 import { logger } from "./config/logger";
 import { MessageProcessor } from "./message-processor/message-processor";
 import qrcode from 'qrcode-terminal';
-const wwebVersion = "2.2407.3";
+const wwebVersion = "2.2410.1";
 
 const client = new Client({
   authStrategy: new LocalAuth(),
