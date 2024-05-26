@@ -52,12 +52,14 @@ client.on("message", async msg => {
   const now = new Date();
   const currentHour = now.getHours();
   const currentDay = now.getDay();
-
   logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
   try {
     const processor = getProcessor(message);
     if (!processor) {
-      const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
+
+  logger.info(`Received message: ${message} from ${senderID}`);
+
+  const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
 Por favor, escolha uma opção:
 1️⃣ Criar Conta
 2️⃣ Saldo Não Atualizado Após Recarga
@@ -74,10 +76,8 @@ Por favor, escolha uma opção:
 0️⃣ Outras Dúvidas
 `;
 
-  if (message.toLowerCase() === 'suporte' || message.toLowerCase() === 'help') {
    
-    await client.sendMessage(message, menuMessage);
-  } else {
+    msg.reply(menuMessage);
     let response = '';
     switch (message) {
       case '1':
@@ -174,8 +174,7 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
     }
 
     msg.reply(response);
-    
-  }
+  
       return;
     }
 
