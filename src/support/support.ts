@@ -1,28 +1,56 @@
 import { Client } from 'whatsapp-web.js';
 
+const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
+Por favor, escolha uma opção:
+1️. Criar Conta
+2️. Saldo Não Atualizado Após Recarga
+3️. Código de Verificação Não Recebido
+4️. Cancelar Viagem
+5️. Número de Carta de Condução Associado a Outra Conta
+6️. Problema ao Terminar Viagem de Entrega
+7️. Dificuldades para Iniciar Sessão
+8️. Localização Incorreta no Mapa
+9️. Viagens com Ponto de Recolha Distante
+10. App Não Mostra Ponto de Recolha ou Rota
+1️1. Como Recarregar a Conta
+1️2. O saldo reduziu sem ter feito corridas durante a noite.
+0. Outras Dúvidas
+`;
+
+const recarregamentoMessage = `Envie o comprovativo de recarregamento no seguinte formato:
+
+*🔄 Recarregamento 24H*
+    
+*🔹 Primeiro Passo: Envio do Valor*
+Envie o valor desejado para recarregar a sua conta utilizando uma das seguintes opções:
+* *M-Pesa*: Envie para o número 📱 850368938
+* *E-Mola*: Envie para o número 📱 873528154
+* *Nome do destinatário*: ALBERTO ELIAS
+      
+*🔹 Segundo Passo: Confirmação do Número*
+* Após realizar o pagamento, copie a mensagem de confirmação recebida.
+* Envie essa mensagem juntamente com o número do seu celular associado à conta para garantir que o crédito seja adicionado à conta correta.
+      
+*🔹 Terceiro Passo: Envio de Comprovativo*
+* Envie a mensagem de confirmação comprovativa para o WhatsApp 📲 +258850368938.
+* Este passo é crucial para assegurar que o seu recarregamento seja processado sem demoras.
+      
+Esses passos garantem que o processo de recarregamento seja feito de forma segura e eficiente, mantendo você sempre pronto para novas corridas! 🚕💨`;
+
+interface UserState {
+  [key: string]: {
+    menu: 'initial' | 'support' | null;
+  };
+}
+
+const userStates: UserState = {};
+
 export async function handleSupportMessages(client: Client, from: string, body: string) {
   const now = new Date();
   const currentHour = now.getHours();
   const currentDay = now.getDay();
 
-  const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
-Por favor, escolha uma opção:
-1️⃣ Criar Conta
-2️⃣ Saldo Não Atualizado Após Recarga
-3️⃣ Código de Verificação Não Recebido
-4️⃣ Cancelar Viagem
-5️⃣ Número de Carta de Condução Associado a Outra Conta
-6️⃣ Problema ao Terminar Viagem de Entrega
-7️⃣ Dificuldades para Iniciar Sessão
-8️⃣ Localização Incorreta no Mapa
-9️⃣ Viagens com Ponto de Recolha Distante
-🔟 App Não Mostra Ponto de Recolha ou Rota
-1️⃣1️⃣ Como Recarregar a Conta
-1️⃣2️⃣ O saldo reduziu sem ter feito corridas durante a noite.
-0️⃣ Outras Dúvidas
-`;
-
-    await client.sendMessage(from, menuMessage);
+  if (userStates[from]?.menu === 'support') {
     let response = '';
     switch (body) {
       case '1':
@@ -41,11 +69,10 @@ Por favor, escolha uma opção:
         response = `Verifique se não possui uma conta com sua carta de condução associada a outro parceiro. Se tiver, peça para que coloquem a conta em estado inativo para que possa acessar sua conta sem restrições, pois não é possível estar online em dois parceiros simultaneamente.`;
         break;
       case '6':
-        response = 'Se está enfrentando problemas ao terminar a viagem de entrega, verifique a conexão ou reinicie o app.Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
+        response = 'Se está enfrentando problemas ao terminar a viagem de entrega, verifique a conexão ou reinicie o app. Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
         break;
       case '7':
         response = `Leia atentamente as informações abaixo e siga-as cuidadosamente. Se necessário, reinicie o aplicativo ou desinstale e reinstale-o.
-
 * Clicar em "Adicionar outras empresas de táxi;
 * Inserir o número e inserir o código de verificação;
 * Clicar na seta ⬅️ para voltar;
@@ -63,27 +90,10 @@ Por favor, escolha uma opção:
         response = 'Os parceiros não atribuem viagens diretamente aos motoristas. Você está recebendo viagens distantes porque é o motorista disponível mais próximo do cliente. Se a viagem não for vantajosa para você, pode cancelá-la e reportar ao suporte do aplicativo, caso os pontos sejam reduzidos por cancelamento. 📍';
         break;
       case '10':
-        response = 'Se o app não está mostrando o ponto de recolha ou rota, verifique as configurações de navegação no app (GPS), reinicie o cellular ou acesse as definições do aplicativo, clique em "Navegação" e ative a opção "Navegação na App".🛣️';
+        response = 'Se o app não está mostrando o ponto de recolha ou rota, verifique as configurações de navegação no app (GPS), reinicie o celular ou acesse as definições do aplicativo, clique em "Navegação" e ative a opção "Navegação na App".🛣️';
         break;
       case '11':
-        response = `*🔄 Recarregamento 24H*
-      
-*🔹 Primeiro Passo: Envio do Valor*
-Envie o valor desejado para recarregar a sua conta utilizando uma das seguintes opções:
-* *M-Pesa*: Envie para o número 📱 850368938
-* *E-Mola*: Envie para o número 📱 873528154
-* *Nome do destinatário*: ALBERTO ELIAS
-        
-*🔹 Segundo Passo: Confirmação do Número*
-* Após realizar o pagamento, copie a mensagem de confirmação recebida.
-* Envie essa mensagem juntamente com o número do seu celular associado à conta para garantir que o crédito seja adicionado à conta correta.
-        
-*🔹 Terceiro Passo: Envio de Comprovativo*
-* Envie a mensagem de confirmação comprovativa para o WhatsApp 📲 +258850368938.
-* Este passo é crucial para assegurar que o seu recarregamento seja processado sem demoras.
-        
-Esses passos garantem que o processo de recarregamento seja feito de forma segura e eficiente, mantendo você sempre pronto para novas corridas! 🚕💨
-        `;
+        response = recarregamentoMessage;
         break;
       case '12':
         response = `Remoção do Bônus de Compensação por Viagens
@@ -116,5 +126,25 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
     }
 
     await client.sendMessage(from, response);
-  
+    userStates[from].menu = null; // Reset user state after handling support message
+  }
+}
+
+export async function handleInitialMenu(client: Client, from: string, body: string) {
+  const initialMenu = `Bem-vindo! Por favor, escolha uma opção:
+1️⃣ Recarregamentos
+2️⃣ Suporte`;
+
+  if (!userStates[from]) {
+    userStates[from] = { menu: null };
+  }
+
+  if (body === '1') {
+    await client.sendMessage(from, recarregamentoMessage);
+  } else if (body === '2') {
+    await client.sendMessage(from, menuMessage);
+    userStates[from].menu = 'support'; // Set user state to support menu
+  } else {
+    await client.sendMessage(from, initialMenu);
+  }
 }
