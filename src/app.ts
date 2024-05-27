@@ -7,7 +7,7 @@ import { createFleetTransaction } from "./yandex-adapter";
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { logger } from "./config/logger";
 import { MessageProcessor } from "./message-processor/message-processor";
-import { handleSupportMessages, handleInitialMenu } from './support/support'
+import { handleSupportMessages, handleInitialMenu, userStates } from './support/support'
 
 import qrcode from 'qrcode-terminal';
 const wwebVersion = "2.2410.1";
@@ -55,7 +55,16 @@ client.on("message", async msg => {
       const processor = getProcessor(message);
       if (!processor) {
         
-        await handleInitialMenu(client, senderID, message);
+        if (!userStates[senderID]) {
+          userStates[senderID] = { menu: 'initial' };
+        }
+      
+        if (userStates[senderID].menu === 'initial') {
+          await handleInitialMenu(client, senderID, message);
+        } else if (userStates[senderID].menu === 'support') {
+          await handleSupportMessages(client, senderID, message);
+          userStates[senderID].menu = 'initial'; // Reset user state to initial after handling support message
+        }
         return;
       }
 
