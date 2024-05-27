@@ -1,20 +1,20 @@
 import { Client } from 'whatsapp-web.js';
 
-const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
-Por favor, escolha uma opção:
-1. Criar Conta
-2. Saldo Não Atualizado Após Recarga
-3. Código de Verificação Não Recebido
-4. Cancelar Viagem
-5. Número de Carta de Condução Associado a Outra Conta
-6. Problema ao Terminar Viagem de Entrega
-7. Dificuldades para Iniciar Sessão
-8. Localização Incorreta no Mapa
-9. Viagens com Ponto de Recolha Distante
-10. App Não Mostra Ponto de Recolha ou Rota
-11. Como Recarregar a Conta
-12. O saldo reduziu sem ter feito corridas durante a noite.
-0. Outras Dúvidas
+const menuMessage = `*Bem-vindo ao Suporte da MyTaxi! 🚖
+Por favor, escolha uma opção:*
+*1. Criar Conta*
+*2. Saldo Não Atualizado Após Recarga*
+*3. Código de Verificação Não Recebido*
+*4. Cancelar Viagem*
+*5. Número de Carta de Condução Associado a Outra Conta*
+*6. Problema ao Terminar Viagem de Entrega*
+*7. Dificuldades para Iniciar Sessão*
+*8. Localização Incorreta no Mapa*
+*9. Viagens com Ponto de Recolha Distante*
+*10. App Não Mostra Ponto de Recolha ou Rota*
+*11. Como Recarregar a Conta*
+*12. O saldo reduziu sem ter feito corridas durante a noite.*
+*0. Outras Dúvidas*
 `;
 
 const recarregamentoMessage = `Envie o comprovativo de recarregamento no seguinte formato:
@@ -128,9 +128,11 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
 }
 
 export async function handleInitialMenu(client: Client, from: string, body: string) {
-  const initialMenu = `Bem-vindo a da MyTaxi🚖! Por favor, escolha uma opção:
-1. Recarregamentos
-2. Suporte`;
+  const initialMenu = `*Bem-vindo a MyTaxi🚖! Por favor, escolha uma opção:*
+*1. Recarregamentos*
+*2. Suporte*`;
+
+await client.sendMessage(from, initialMenu);
 
   if (!userStates[from]) {
     userStates[from] = { menu: 'initial' };
