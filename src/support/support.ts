@@ -22,9 +22,7 @@ Por favor, escolha uma opção:
 0️⃣ Outras Dúvidas
 `;
 
-  if (body.toLowerCase() === 'suporte' || body.toLowerCase() === 'help') {
     await client.sendMessage(from, menuMessage);
-  } else {
     let response = '';
     switch (body) {
       case '1':
@@ -118,5 +116,5 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
     }
 
     await client.sendMessage(from, response);
-  }
+  
 }

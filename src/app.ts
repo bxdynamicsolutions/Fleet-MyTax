@@ -54,7 +54,39 @@ client.on("message", async msg => {
   try {
     const processor = getProcessor(message);
     if (!processor) {
-      await handleSupportMessages(client, senderID, message);
+      if (!processor) {
+        const initialMenu = `Bem-vindo! Por favor, escolha uma opção:
+        1️⃣ Recarregamentos
+        2️⃣ Suporte`;
+        
+          if (message === '1') {
+            const recarregamentoMessage = `Envie o comprovativo de recarregamento no seguinte formato:
+            
+        *🔄 Recarregamento 24H*
+              
+        *🔹 Primeiro Passo: Envio do Valor*
+        Envie o valor desejado para recarregar a sua conta utilizando uma das seguintes opções:
+        * *M-Pesa*: Envie para o número 📱 850368938
+        * *E-Mola*: Envie para o número 📱 873528154
+        * *Nome do destinatário*: ALBERTO ELIAS
+                
+        *🔹 Segundo Passo: Confirmação do Número*
+        * Após realizar o pagamento, copie a mensagem de confirmação recebida.
+        * Envie essa mensagem juntamente com o número do seu celular associado à conta para garantir que o crédito seja adicionado à conta correta.
+                
+        *🔹 Terceiro Passo: Envio de Comprovativo*
+        * Envie a mensagem de confirmação comprovativa para o WhatsApp 📲 +258850368938.
+        * Este passo é crucial para assegurar que o seu recarregamento seja processado sem demoras.
+                
+        Esses passos garantem que o processo de recarregamento seja feito de forma segura e eficiente, mantendo você sempre pronto para novas corridas! 🚕💨`;
+            await client.sendMessage(senderID, recarregamentoMessage);
+          } else if (message === '2') {
+            await handleSupportMessages(client, senderID, message);
+          } else {
+            await client.sendMessage(senderID, initialMenu);
+          }
+  
+      }
       return;
     }
 
