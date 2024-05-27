@@ -48,15 +48,16 @@ client.on("ready", () => {
 });
 
 client.on("message", async msg => {
-  let message = msg.body;
-  let senderID = msg.from;
-  logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
-  try {
-    const processor = getProcessor(message);
-    if (!processor) {
-      await handleInitialMenu(client, senderID, message);
-      return;
-    }
+    let message = msg.body;
+    let senderID = msg.from;
+    logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
+    try {
+      const processor = getProcessor(message);
+      if (!processor) {
+        
+        await handleInitialMenu(client, senderID, message);
+        return;
+      }
 
     const transaction = processor.process(message);
 
