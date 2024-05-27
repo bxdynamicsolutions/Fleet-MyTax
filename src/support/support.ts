@@ -1,19 +1,19 @@
 import { Client } from 'whatsapp-web.js';
 
-const menuMessage = `Bem-vindo ao Suporte da MyTaxi! 🚖
+const menuMessage = `*Bem-vindo ao Suporte da MyTaxi!* 🚖
 Por favor, escolha uma opção:
-1️. Criar Conta
-2️. Saldo Não Atualizado Após Recarga
-3️. Código de Verificação Não Recebido
-4️. Cancelar Viagem
-5️. Número de Carta de Condução Associado a Outra Conta
-6️. Problema ao Terminar Viagem de Entrega
-7️. Dificuldades para Iniciar Sessão
-8️. Localização Incorreta no Mapa
-9️. Viagens com Ponto de Recolha Distante
+1. Criar Conta
+2. Saldo Não Atualizado Após Recarga
+3. Código de Verificação Não Recebido
+4. Cancelar Viagem
+5. Número de Carta de Condução Associado a Outra Conta
+6. Problema ao Terminar Viagem de Entrega
+7. Dificuldades para Iniciar Sessão
+8. Localização Incorreta no Mapa
+9. Viagens com Ponto de Recolha Distante
 10. App Não Mostra Ponto de Recolha ou Rota
-1️1. Como Recarregar a Conta
-1️2. O saldo reduziu sem ter feito corridas durante a noite.
+11. Como Recarregar a Conta
+12. O saldo reduziu sem ter feito corridas durante a noite.
 0. Outras Dúvidas
 `;
 
@@ -29,7 +29,7 @@ Envie o valor desejado para recarregar a sua conta utilizando uma das seguintes 
       
 *🔹 Segundo Passo: Confirmação do Número*
 * Após realizar o pagamento, copie a mensagem de confirmação recebida.
-* Envie essa mensagem juntamente com o número do seu celular associado à conta para garantir que o crédito seja adicionado à conta correta.
+* Envie essa mensagem juntamente com o número do seu celular associado à conta *Yango* no fim do cortpo da mensagem para garantir que o Saldo seja adicionado à conta correta.
       
 *🔹 Terceiro Passo: Envio de Comprovativo*
 * Envie a mensagem de confirmação comprovativa para o WhatsApp 📲 +258850368938.
@@ -132,8 +132,8 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
 
 export async function handleInitialMenu(client: Client, from: string, body: string) {
   const initialMenu = `Bem-vindo! Por favor, escolha uma opção:
-1️⃣ Recarregamentos
-2️⃣ Suporte`;
+1. Recarregamentos
+2. Suporte`;
 
   if (!userStates[from]) {
     userStates[from] = { menu: null };
@@ -144,6 +144,7 @@ export async function handleInitialMenu(client: Client, from: string, body: stri
   } else if (body === '2') {
     await client.sendMessage(from, menuMessage);
     userStates[from].menu = 'support'; // Set user state to support menu
+    handleSupportMessages(client, from, body);
   } else {
     await client.sendMessage(from, initialMenu);
   }
