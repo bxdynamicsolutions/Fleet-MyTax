@@ -1,20 +1,26 @@
 import { Client } from 'whatsapp-web.js';
+import { UserState } from '../types/types';
 
-const menuMessage = `*Bem-vindo ao Suporte da MyTaxi! 🚖
-Por favor, escolha uma opção:*
-*1. Criar Conta*
-*2. Saldo Não Atualizado Após Recarga*
-*3. Código de Verificação Não Recebido*
-*4. Cancelar Viagem*
-*5. Número de Carta de Condução Associado a Outra Conta*
-*6. Problema ao Terminar Viagem de Entrega*
-*7. Dificuldades para Iniciar Sessão*
-*8. Localização Incorreta no Mapa*
-*9. Viagens com Ponto de Recolha Distante*
-*10. App Não Mostra Ponto de Recolha ou Rota*
-*11. Como Recarregar a Conta*
-*12. O saldo reduziu sem ter feito corridas durante a noite.*
-*0. Outras Dúvidas*
+const menuMessage = `*Bem-vindo (a) ao Suporte da My Taxi!* 🚖
+
+*Como podemos ajudá-lo?*
+
+*1.* Criar Conta. 💼
+*2.* O saldo não é exibido no aplicativo após recarregar a conta.💸
+*3.* Não estou recebendo o código de verificação.📥
+*4.* Preciso cancelar uma viagem.🚦
+*5.* Meu número de carta de condução está associado a outra conta.📴
+*6.* Problema ao terminar uma viagem de entrega (Delivery).📦
+*7.* Dificuldades para Iniciar Sessão.📲
+*8.* O mapa não mostra minha localização atual nem as avenidas próximas.🧭
+*9.* A App não mostra o ponto de recolha, o destino ou a rota selecionada.🗾Verifique as permissões de localização em seu dispositivo e reinicie o GPS
+*10.* Como Recarregar a Conta.💳
+*11.* Os bónus por compensação de desconto foram retirados do saldo.⚠️
+*0.* Outro.
+
+Responda # para retornar ↩️ ao Menu Principal.
+
+*#MyTaxi #Yango #bxd*
 `;
 
 const recarregamentoMessage = `Envie o comprovativo de recarregamento no seguinte formato:
@@ -35,40 +41,48 @@ Envie o valor desejado para recarregar a sua conta utilizando uma das seguintes 
 * Envie a mensagem de confirmação comprovativa para o WhatsApp 📲 +258850368938.
 * Este passo é crucial para assegurar que o seu recarregamento seja processado sem demoras.
       
-Esses passos garantem que o processo de recarregamento seja feito de forma segura e eficiente, mantendo você sempre pronto para novas corridas! 🚕💨`;
+Esses passos garantem que o processo de recarregamento seja feito de forma segura e eficiente, mantendo você sempre pronto para novas corridas! 🚕💨
 
-interface UserState {
-  [key: string]: {
-    menu: 'initial' | 'support' | null;
-  };
-}
+*#MyTaxi #Yango #bxd*`;
 
-const userStates: UserState = {};
-
-export async function handleSupportMessages(client: Client, from: string, body: string) {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentDay = now.getDay();
+interface UserStates {
+    [key: string]: UserState;
+  }
+  
+  const userStates: UserStates = {};
+  
+  export async function handleSupportMessages(client: Client, from: string, body: string) {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentDay = now.getDay();
 
   let response = '';
   switch (body) {
     case '1':
-      response = 'Para se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲';
+      response = `Para se registrar, acesse este link httpPara se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲s://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲
+* Para se registrar, acesse ao link https://yango.com/forms/driverPara se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359
+
+* Baixe o aplicativo YangoPro na Play Store ou App Store.
+
+* Para completar a configuração, siga as instruções📲: https://youtu.be/Wr7lX8JpES8?si=TUFb7r_e1p-Y8RC1`;
       break;
     case '2':
-      response = 'Clique na opção "Saldo" no aplicativo para atualizar. Se o problema persistir, verifique se está conectado na conta correta My Taxi. 💳';
+      response = 'Clique na opção "Saldo" no aplicativo para atualizar. Se o problema persistir, certifique-se de que está na conta do parceiro MyTaxi. 💳';
       break;
     case '3':
-      response = 'Confirme se o número de telefone está correto e em sua posse. Solicite o reenvio do código por SMS ou WhatsApp e aguarde alguns minutos. 📩';
+      response = `
+Verifique se o número de telefone para o qual está sendo enviado o código de verificação está em sua posse. Se não estiver, peça à pessoa que lhe envie o código. 
+Caso o número esteja em sua posse, solicite o reenvio do código de verificação por SMS ou WhatsApp e aguarde.
+      📩`;
       break;
     case '4':
-      response = 'Você pode cancelar a viagem no app após aguardar o tempo mínimo requerido. Caso tenha dificuldades, contate o suporte. 🚕';
+      response = 'Você pode cancelar a viagem após atingir o tempo de espera de 10 minutos, caso esteja no ponto de recolha. 🚕';
       break;
     case '5':
       response = `Verifique se não possui uma conta com sua carta de condução associada a outro parceiro. Se tiver, peça para que coloquem a conta em estado inativo para que possa acessar sua conta sem restrições, pois não é possível estar online em dois parceiros simultaneamente.`;
       break;
     case '6':
-      response = 'Se está enfrentando problemas ao terminar a viagem de entrega, verifique a conexão ou reinicie o app. Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
+      response = ' Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
       break;
     case '7':
       response = `Leia atentamente as informações abaixo e siga-as cuidadosamente. Se necessário, reinicie o aplicativo ou desinstale e reinstale-o.
@@ -80,22 +94,20 @@ export async function handleSupportMessages(client: Client, from: string, body: 
 * Inserir o número de celular;
 * Receber e inserir o código de verificação;
 * Escolher o parceiro My Taxi;
-        `;
+        
+*#MyTaxi #Yango #bxd*`;
       break;
     case '8':
-      response = 'Verifique as permissões de localização em seu dispositivo e reinicie o GPS. 🌍';
+      response = 'Desligue e ligue novamente os dados de localização no seu celular. Em seguida, ative o GPS. Você também pode ir às configurações do celular e atualizar os serviços de localização.. 🌍';
       break;
     case '9':
-      response = 'Os parceiros não atribuem viagens diretamente aos motoristas. Você está recebendo viagens distantes porque é o motorista disponível mais próximo do cliente. Se a viagem não for vantajosa para você, pode cancelá-la e reportar ao suporte do aplicativo, caso os pontos sejam reduzidos por cancelamento. 📍';
-      break;
+        response = 'Se o app não está mostrando o ponto de recolha ou rota, verifique as configurações de navegação no app (GPS), reinicie o celular ou acesse as definições do aplicativo, clique em "Navegação" e ative a opção "Navegação na App".🛣️';
+         break;
     case '10':
-      response = 'Se o app não está mostrando o ponto de recolha ou rota, verifique as configurações de navegação no app (GPS), reinicie o celular ou acesse as definições do aplicativo, clique em "Navegação" e ative a opção "Navegação na App".🛣️';
+        response = recarregamentoMessage;
       break;
     case '11':
-      response = recarregamentoMessage;
-      break;
-    case '12':
-      response = `Remoção do Bônus de Compensação por Viagens
+        response = `Remoção do Bônus de Compensação por Viagens
 
 Este procedimento é ativado quando o sistema identifica viagens fraudulentas realizadas pelo motorista, isto é, viagens em que o condutor encerra a corrida antes ou depois dos destinos indicados pelo passageiro no aplicativo.
 
@@ -105,19 +117,30 @@ Para evitar que o sistema classifique uma viagem como fraudulenta, recomenda-se:
 
 * Reconhecendo que a maioria dos passageiros não especifica destinos precisos, utilizando pontos de referência ao solicitar a viagem, o aplicativo da Yango permite que o motorista classifique a corrida, justificando por que deixou o passageiro fora do ponto de destino marcado. Essa classificação deve ser de, no máximo, três estrelas, e selecionar a opção "Morada Inválida".
 
-Somente assim o sistema não identificará a viagem como fraudulenta.`; 
+Somente assim o sistema não identificará a viagem como fraudulenta.
+
+*#MyTaxi #Yango #bxd*`; 
       break;
     case '0':
       if (currentHour > 18 || (currentDay === 6 && currentHour > 13) || currentDay === 0) {
         if (currentDay === 6 && currentHour > 13) {
-          response = 'Nosso suporte está encerrado, procure a solução na lista acima, caso não encontre iremos a atendê-lo na segunda-feira às 08:00. Para assistência, entre em contato com um dos nossos representantes. 🕒';
-        } else if (currentDay === 0) {
-          response = 'Nosso suporte está encerrado, procure a solução na lista acima, caso não encontre iremos a atendê-lo na segunda-feira às 08:00. Para assistência, entre em contato com um dos nossos representantes. 🕒';
-        } else {
-          response = 'Nosso suporte está encerrado, procure a solução na lista acima, caso não encontre iremos a atendê-lo amanhã às 08:00. Para assistência, entre em contato com um dos nossos representantes. 🕒';
+          response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta, estaremos disponíveis para atendê-lo amanhã a partir das 08:00. 🕒';
+        }else {
+          response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo na segunda-feira a partir das 08:00. Agradecemos pela compreensão.🫱🏼‍🫲🏼 🕒';
         }
       } else {
-        response = 'Para outras dúvidas, por favor entre em contato com nosso suporte. Estamos aqui para ajudar! 📞';
+        response = `
+*Para outras dúvidas, por favor, entre em contato com nosso suporte pelos seguintes números:*
+
+* +258 86 104 7949
+* +258 87 352 8154 (WhatsApp)
+* +258 86 576 9843
+* +258 85 329 3875
+        
+Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
+
+*#MyTaxi #Yango #bxd*
+`;
       }
       break;
     default:
@@ -129,23 +152,31 @@ Somente assim o sistema não identificará a viagem como fraudulenta.`;
 
 export async function handleInitialMenu(client: Client, from: string, body: string) {
   const initialMenu = `*Bem-vindo a MyTaxi🚖! Por favor, escolha uma opção:*
-*1. Recarregamentos*
-*2. Suporte*`;
+*1.* Recarregamentos
+*2.* Suporte
+
+*#MyTaxi #Yango #bxd*`;
+
 
 await client.sendMessage(from, initialMenu);
 
-  if (!userStates[from]) {
-    userStates[from] = { menu: 'initial' };
-  }
+if (!userStates[from]) {
+  userStates[from] = { menu: 'initial', menuShown: false };
+}
 
-  if (body === '1') {
-    await client.sendMessage(from, recarregamentoMessage);
-  } else if (body === '2') {
-    await client.sendMessage(from, menuMessage);
-    userStates[from].menu = 'support';
-  } else {
+if (!userStates[from].menuShown) {
     await client.sendMessage(from, initialMenu);
-  }
+    userStates[from].menuShown = true; // Set the flag to true after showing the menu
+} 
+
+if (body === '1') {
+  await client.sendMessage(from, recarregamentoMessage);
+} else if (body === '2') {
+  await client.sendMessage(from, menuMessage);
+  userStates[from].menu = 'support';
+} else {
+  await client.sendMessage(from, initialMenu);
+}
 }
 
 export { userStates };

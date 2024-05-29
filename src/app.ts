@@ -8,13 +8,14 @@ import { Client, LocalAuth } from "whatsapp-web.js";
 import { logger } from "./config/logger";
 import { MessageProcessor } from "./message-processor/message-processor";
 import { handleSupportMessages, handleInitialMenu, userStates } from './support/support'
+import { UserState } from './types/types';
+
 
 import qrcode from 'qrcode-terminal';
 const wwebVersion = "2.2410.1";
 
 const client = new Client({
   authStrategy: new LocalAuth(),
-  // proxyAuthentication: { username: 'username', password: 'password' },
   puppeteer: {
     args: ["--no-sandbox"],
     headless: true,
@@ -30,7 +31,6 @@ client.on("loading_screen", (percent, message) => {
 });
 
 client.on("qr", qr => {
-  // NOTE: This event will not be fired if a session is specified.
   logger.info("QR RECEIVED", qr);
   qrcode.generate(qr, { small: true });
 });
@@ -48,25 +48,26 @@ client.on("ready", () => {
 });
 
 client.on("message", async msg => {
-    let message = msg.body;
-    let senderID = msg.from;
-    logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
-    try {
-      const processor = getProcessor(message);
-      if (!processor) {
-        
-        if (!userStates[senderID]) {
-          userStates[senderID] = { menu: 'initial' };
-        }
-      
-        if (userStates[senderID].menu === 'initial') {
-          await handleInitialMenu(client, senderID, message);
-        } else if (userStates[senderID].menu === 'support') {
-          await handleSupportMessages(client, senderID, message);
-          userStates[senderID].menu = 'initial'; // Reset user state to initial after handling support message
-        }
-        return;
+  let message = msg.body;
+  let senderID = msg.from;
+  logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
+  try {
+    const processor = getProcessor(message);
+    if (!processor) {
+      if (!userStates[senderID]) {
+        userStates[senderID] = { menu: 'initial', menuShown: false };
       }
+    
+      if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
+        await handleInitialMenu(client, senderID, message);
+        userStates[senderID].menuShown = true; // Set the flag to true after showing the menu
+      } else if (userStates[senderID].menu === 'support') {
+        await handleSupportMessages(client, senderID, message);
+        userStates[senderID].menu = 'initial'; // Reset user state to initial after handling support message
+        userStates[senderID].menuShown = false; // Reset the flag for the initial menu
+      }
+      return;
+    }
 
     const transaction = processor.process(message);
 
@@ -77,7 +78,7 @@ client.on("message", async msg => {
 
     if (!result.success || transaction.contact === 'N/A') {
       const errorMessage =
-        `Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:\n\n${processor.getExampleMessage()}\n\nPor favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga.\nCaso o problema persista, a recarga pode ter sido usada ou adulterada!\nEm caso de dúvidas, entre em contacto com o suporte!`.trimStart();
+        `Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:\n\n${processor.getExampleMessage()}\n\nPor favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga. Caso o problema persista, a recarga pode ter sido usada ou adulterada! Em caso de dúvidas, entre em contacto com o suporte!`.trimStart();
       logger.info(errorMessage);
       msg.reply(errorMessage);
       return;
@@ -86,10 +87,10 @@ client.on("message", async msg => {
     const createResult = await createFleetTransaction(transaction.contact, transaction.amount, transaction.id);
     if (!createResult.success) {
       logger.info(
-        "Ocorreu um erro durante o recarregamento. Por favor, tente novamente!\nSe o problema persistir, entre em contacto com o suporte!",
+        "Ocorreu um erro durante o recarregamento. Por favor, tente novamente! Se o problema persistir, entre em contacto com o suporte!",
       );
       msg.reply(
-        "Ocorreu um erro durante o recarregamento. Por favor, tente novamente!\nSe o problema persistir, entre em contacto com o suporte!",
+        "Ocorreu um erro durante o recarregamento. Por favor, tente novamente! Se o problema persistir, entre em contacto com o suporte!",
       );
       return;
     }
@@ -104,7 +105,6 @@ client.on("message", async msg => {
 });
 
 function getProcessor(message: string): MessageProcessor | null {
-  // Lógica de extração EMOLA
   if (message.substring(0, 2) === "ID") {
     return new EmolaPtMessageProcessor();
   } else if (message.startsWith("Transaction")) {
