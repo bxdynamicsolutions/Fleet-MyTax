@@ -12,8 +12,7 @@ import { UserState } from './types/types';
 
 
 import qrcode from 'qrcode-terminal';
-const wwebVersion = "2.2410.1";
-
+const wwebVersion = "2.3000.1011643235";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
