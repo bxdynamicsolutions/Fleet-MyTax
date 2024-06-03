@@ -132,54 +132,63 @@ Somente assim o sistema não identificará a viagem como fraudulenta.
         response = `
 *Para outras dúvidas, por favor, entre em contato com nosso suporte pelos seguintes números:*
 
-* +258 86 104 7949
+* +258 86 104 7949 (Chamada ou WhatsApp)
 * +258 87 352 8154 (WhatsApp)
-* +258 86 576 9843
-* +258 85 329 3875
+* +258 86 576 9843 (Chamada)
+* +258 85 329 3875 (Envio de Comprovativo no WhatsApp)
         
 Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
 
-*#MyTaxi #Yango #bxd*
-`;
+*#MyTaxi #Yango #bxd*`;
       }
       break;
       case '#':
-        handleInitialMenu(client, from, body);
+        userStates[from].menuShown = false; 
+        handleInitialMenu(client, from);
         break;
     default:
-      response = 'Opção inválida. Por favor, escolha uma opção do menu enviando o número correspondente. ❌';
+      response = 'Opção inválida. Por favor, escolha uma opção do menu enviando, o número correspondente. ❌';
   }
 
   await client.sendMessage(from, response);
 }
 
-export async function handleInitialMenu(client: Client, from: string, body: string) {
+export async function handleInitialMenu(client: Client, from: string) {
   const initialMenu = `*Bem-vindo a MyTaxi🚖! Por favor, escolha uma opção:*
 *1.* Recarregamentos
 *2.* Suporte
 
 *#MyTaxi #Yango #bxd*`;
 
+  // Inicializar o estado do usuário, se não estiver definido
+  if (!userStates[from]) {
+    userStates[from] = { menu: 'initial', menuShown: false };
+  }
 
-await client.sendMessage(from, initialMenu);
-
-if (!userStates[from]) {
-  userStates[from] = { menu: 'initial', menuShown: false };
-}
-
-if (!userStates[from].menuShown) {
+  // Mostrar o menu inicial se ainda não foi mostrado
+  if (!userStates[from].menuShown) {
     await client.sendMessage(from, initialMenu);
-    userStates[from].menuShown = true; // Set the flag to true after showing the menu
-} 
-
-if (body === '1') {
-  await client.sendMessage(from, recarregamentoMessage);
-} else if (body === '2') {
-  await client.sendMessage(from, menuMessage);
-  userStates[from].menu = 'support';
-} else {
-  await client.sendMessage(from, initialMenu);
+    userStates[from].menuShown = true; // Definir o flag como verdadeiro após mostrar o menu
+  }
 }
+
+export async function processMenuSelection(client: Client, from: string, body: string) {
+  // Verificar se o usuário está no menu inicial
+  if (userStates[from].menu === 'initial') {
+    if (body === '1' || body.toLowerCase() === 'recarregamentos') {
+      await client.sendMessage(from, recarregamentoMessage);
+    } else if (body === '2' || body.toLowerCase() === 'suporte') {
+      await client.sendMessage(from, menuMessage);
+      userStates[from].menu = 'support'; // Mudar o estado do menu para suporte
+      userStates[from].menuShown = false; // Resetar o flag para o menu de suporte
+    } else {
+      // Se a entrada não for válida, mostrar novamente o menu inicial
+      await client.sendMessage(from, 'Opção inválida. Por favor, escolha uma opção do menu enviando, o número correspondente. ❌❌');
+    }
+  } else if (userStates[from].menu === 'support') {
+    await handleSupportMessages(client, from, body);
+    userStates[from].menuShown = false; // Resetar o flag para o menu inicial
+  }
 }
 
 export { userStates };

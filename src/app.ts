@@ -7,12 +7,12 @@ import { createFleetTransaction } from "./yandex-adapter";
 import { Client, LocalAuth } from "whatsapp-web.js";
 import { logger } from "./config/logger";
 import { MessageProcessor } from "./message-processor/message-processor";
-import { handleSupportMessages, handleInitialMenu, userStates } from './support/support'
+import { handleSupportMessages, handleInitialMenu, userStates, processMenuSelection } from './support/support'
 import { UserState } from './types/types';
 
 
 import qrcode from 'qrcode-terminal';
-const wwebVersion = "2.3000.1011643235";
+const wwebVersion = "2.2412.54";
 const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
@@ -53,18 +53,19 @@ client.on("message", async msg => {
   try {
     const processor = getProcessor(message);
     if (!processor) {
+      // Inicializar o estado do usuário, se não estiver definido
       if (!userStates[senderID]) {
         userStates[senderID] = { menu: 'initial', menuShown: false };
       }
     
+      // Verificar se o menu inicial deve ser mostrado
       if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
-        await handleInitialMenu(client, senderID, message);
-        userStates[senderID].menuShown = true; // Set the flag to true after showing the menu
-      } else if (userStates[senderID].menu === 'support') {
-        await handleSupportMessages(client, senderID, message);
-        userStates[senderID].menu = 'initial'; // Reset user state to initial after handling support message
-        userStates[senderID].menuShown = false; // Reset the flag for the initial menu
+        await handleInitialMenu(client, senderID);
+      } else {
+        // Processar a opção selecionada pelo usuário
+        await processMenuSelection(client, senderID, message);
       }
+    
       return;
     }
 
