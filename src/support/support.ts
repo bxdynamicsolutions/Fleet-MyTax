@@ -143,6 +143,9 @@ Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
 `;
       }
       break;
+      case '#':
+        handleInitialMenu(client, from, body);
+        break;
     default:
       response = 'Opção inválida. Por favor, escolha uma opção do menu enviando o número correspondente. ❌';
   }
