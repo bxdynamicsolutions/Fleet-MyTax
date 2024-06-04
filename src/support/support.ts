@@ -16,12 +16,11 @@ const menuMessage = `*Bem-vindo (a) ao Suporte da My Taxi!* 🚖
 *9.* A App não mostra o ponto de recolha, o destino ou a rota selecionada.🗾Verifique as permissões de localização em seu dispositivo e reinicie o GPS
 *10.* Como Recarregar a Conta.💳
 *11.* Os bónus por compensação de desconto foram retirados do saldo.⚠️
-*0.* Outro.
+*0.* Falar com um humano.
 
 Responda # para retornar ↩️ ao Menu Principal.
 
-*#MyTaxi #Yango #bxd*
-`;
+*#MyTaxi #Yango #bxd*`;
 
 const recarregamentoMessage = `Envie o comprovativo de recarregamento no seguinte formato:
 
@@ -124,9 +123,11 @@ Somente assim o sistema não identificará a viagem como fraudulenta.
     case '0':
       if (currentHour > 18 || (currentDay === 6 && currentHour > 13) || currentDay === 0) {
         if (currentDay === 6 && currentHour > 13) {
+          response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo na segunda-feira a partir das 08:00. Agradecemos pela compreensão.🫱🏼‍🫲🏼 🕒';
+        }else if (currentDay === 0){
           response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta, estaremos disponíveis para atendê-lo amanhã a partir das 08:00. 🕒';
         }else {
-          response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo na segunda-feira a partir das 08:00. Agradecemos pela compreensão.🫱🏼‍🫲🏼 🕒';
+          response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo a partir das 08:00. 🕒';
         }
       } else {
         response = `
@@ -143,7 +144,7 @@ Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
       }
       break;
       case '#':
-        userStates[from].menuShown = false; 
+        userStates[from] = { menu: 'initial', menuShown: false };
         handleInitialMenu(client, from);
         break;
     default:
