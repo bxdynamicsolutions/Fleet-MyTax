@@ -16,9 +16,9 @@ const menuMessage = `*Bem-vindo (a) ao Suporte da My Taxi!* 🚖
 *9.* A App não mostra o ponto de recolha, o destino ou a rota selecionada.🗾Verifique as permissões de localização em seu dispositivo e reinicie o GPS
 *10.* Como Recarregar a Conta.💳
 *11.* Os bónus por compensação de desconto foram retirados do saldo.⚠️
-*0.* Falar com um humano.
+*0.* Falar com humano.
 
-Responda # para retornar ↩️ ao Menu Principal.
+Responda *#* para retornar ↩️ ao Menu Principal.
 
 *#MyTaxi #Yango #bxd*`;
 
@@ -46,24 +46,19 @@ Esses passos garantem que o processo de recarregamento seja feito de forma segur
 
 interface UserStates {
     [key: string]: UserState;
-  }
-  
-  const userStates: UserStates = {};
-  
-  export async function handleSupportMessages(client: Client, from: string, body: string) {
-    const now = new Date();
-    const currentHour = now.getHours();
-    const currentDay = now.getDay();
+}
+
+const userStates: UserStates = {};
+
+export async function handleSupportMessages(client: Client, from: string, body: string) {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentDay = now.getDay();
 
   let response = '';
   switch (body) {
     case '1':
-      response = `Para se registrar, acesse este link httpPara se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲s://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲
-* Para se registrar, acesse ao link https://yango.com/forms/driverPara se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359
-
-* Baixe o aplicativo YangoPro na Play Store ou App Store.
-
-* Para completar a configuração, siga as instruções📲: https://youtu.be/Wr7lX8JpES8?si=TUFb7r_e1p-Y8RC1`;
+      response = `Para se registrar, acesse este link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359, baixe o aplicativo YangoPro na Play Store ou App Store e complete o seu cadastro. 📲`;
       break;
     case '2':
       response = 'Clique na opção "Saldo" no aplicativo para atualizar. Se o problema persistir, certifique-se de que está na conta do parceiro MyTaxi. 💳';
@@ -81,7 +76,7 @@ Caso o número esteja em sua posse, solicite o reenvio do código de verificaç�
       response = `Verifique se não possui uma conta com sua carta de condução associada a outro parceiro. Se tiver, peça para que coloquem a conta em estado inativo para que possa acessar sua conta sem restrições, pois não é possível estar online em dois parceiros simultaneamente.`;
       break;
     case '6':
-      response = ' Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
+      response = 'Tente seguir as instruções para ir até o local mais próximo da entrega. Se isso não funcionar, entre em contato com o suporte para encontrarmos uma solução juntos.🔄';
       break;
     case '7':
       response = `Leia atentamente as informações abaixo e siga-as cuidadosamente. Se necessário, reinicie o aplicativo ou desinstale e reinstale-o.
@@ -124,9 +119,9 @@ Somente assim o sistema não identificará a viagem como fraudulenta.
       if (currentHour > 18 || (currentDay === 6 && currentHour > 13) || currentDay === 0) {
         if (currentDay === 6 && currentHour > 13) {
           response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo na segunda-feira a partir das 08:00. Agradecemos pela compreensão.🫱🏼‍🫲🏼 🕒';
-        }else if (currentDay === 0){
+        } else if (currentDay === 0){
           response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta, estaremos disponíveis para atendê-lo amanhã a partir das 08:00. 🕒';
-        }else {
+        } else {
           response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo a partir das 08:00. 🕒';
         }
       } else {
@@ -143,10 +138,10 @@ Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
 *#MyTaxi #Yango #bxd*`;
       }
       break;
-      case '#':
-        userStates[from] = { menu: 'initial', menuShown: false };
-        handleInitialMenu(client, from);
-        break;
+    case '#':
+      userStates[from] = { menu: 'initial', menuShown: false };
+      await handleInitialMenu(client, from);
+      return; // Adicionando return para evitar continuar o processamento
     default:
       response = 'Opção inválida. Por favor, escolha uma opção do menu enviando, o número correspondente. ❌';
   }
@@ -181,10 +176,11 @@ export async function processMenuSelection(client: Client, from: string, body: s
     } else if (body === '2' || body.toLowerCase() === 'suporte') {
       await client.sendMessage(from, menuMessage);
       userStates[from].menu = 'support'; // Mudar o estado do menu para suporte
-      userStates[from].menuShown = false; // Resetar o flag para o menu de suporte
+      userStates[from].menuShown = true; // Garantir que o menu foi mostrado
     } else {
       // Se a entrada não for válida, mostrar novamente o menu inicial
-      await client.sendMessage(from, 'Opção inválida. Por favor, escolha uma opção do menu enviando, o número correspondente. ❌❌');
+      await client.sendMessage(from, 'Opção inválida. Por favor, escolha uma opção do menu enviando o número correspondente. ❌');
+      userStates[from].menuShown = false; // Resetar o flag para mostrar o menu inicial novamente se necessário
     }
   } else if (userStates[from].menu === 'support') {
     await handleSupportMessages(client, from, body);
