@@ -101,7 +101,7 @@ client.on("message", async msg => {
     msg.reply("Conta recarregada!");
   } catch (error) {
     logger.error(`Ocorreu um erro: ${error}`);
-    msg.reply("Desculpe, ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
+    //msg.reply("Desculpe, ocorreu um erro inesperado. Por favor, tente novamente mais tarde.");
   }
 });
 
