@@ -50,20 +50,21 @@ client.on("message", async msg => {
   let message = msg.body;
   let senderID = msg.from;
   logger.info("MESSAGE RECEIVED: " + JSON.stringify(msg));
-  try {
+   try {
     const processor = getProcessor(message);
    if (!processor) {
   // Inicializar o estado do usuário, se não estiver definido
   if (!userStates[senderID]) {
-    userStates[senderID] = { menu: 'initial', menuShown: false };
+   // userStates[senderID] = { menu: 'initial', menuShown: false };
   }
 
   // Verificar se o menu inicial deve ser mostrado
   if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
-    await handleInitialMenu(client, senderID);
+    // await handleInitialMenu(client, senderID);
   } else {
     // Processar a opção selecionada pelo usuário
-    await processMenuSelection(client, senderID, message);
+    //ola
+    // await processMenuSelection(client, senderID, message);
   }
 
   return;

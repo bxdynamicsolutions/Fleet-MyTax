@@ -58,8 +58,9 @@ export async function handleSupportMessages(client: Client, from: string, body: 
   let response = '';
   switch (body) {
     case '1':
-      response = `
-* Para registrar-se, acesse ao link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359
+      response = `*Para novo cadastro siga os passos Abaixo:*
+
+* Acesse ao seguinte link https://yango.com/forms/driver_partner_selfreg_multipage?ref_id=9b6dddd4bcb84b8084e4fc4bad86a359
 
 * Baixe o aplicativo YangoPro na Play Store ou App Store e inicie sessão.
       
@@ -69,8 +70,7 @@ export async function handleSupportMessages(client: Client, from: string, body: 
       response = 'Clique na opção "Saldo" no aplicativo para atualizar. Se o problema persistir, certifique-se de que está na conta do parceiro MyTaxi. 💳';
       break;
     case '3':
-      response = `
-Verifique se o número de telefone para o qual está sendo enviado o código de verificação está em sua posse. Se não estiver, peça à pessoa que lhe envie o código. 
+      response = `Verifique se o número de telefone para o qual está sendo enviado o código de verificação está em sua posse. Se não estiver, peça à pessoa que lhe envie o código. 
 Caso o número esteja em sua posse, solicite o reenvio do código de verificação por SMS ou WhatsApp e aguarde.📩`;
       break;
     case '4':
@@ -84,6 +84,7 @@ Caso o número esteja em sua posse, solicite o reenvio do código de verificaç�
       break;
     case '7':
       response = `Leia atentamente as informações abaixo e siga-as cuidadosamente. Se necessário, reinicie o aplicativo ou desinstale e reinstale-o.
+
 * Clicar em "Adicionar outras empresas de táxi;
 * Inserir o número e inserir o código de verificação;
 * Clicar na seta ⬅️ para voltar;
@@ -133,8 +134,7 @@ Agradecemos pela compreensão.🫱🏼‍🫲🏼 🕒
           response = 'Nosso suporte está encerrado.⛔ Por favor, consulte a lista de perguntas acima para possíveis soluções. Caso não encontre a resposta que procura, estaremos disponíveis para atendê-lo a partir das 08:00. 🕒';
         }
       } else {
-        response = `
-*Para outras dúvidas, por favor, entre em contato com nosso suporte pelos seguintes números:*
+        response = `*Para outras dúvidas, por favor, entre em contato com nosso suporte pelos seguintes números:*
 
 * +258 86 104 7949 (Chamada ou WhatsApp)
 * +258 87 352 8154 (WhatsApp)
@@ -147,7 +147,7 @@ Estamos aqui para ajudar!🫱🏼‍🫲🏼😃📞
       }
       break;
     case '#':
-      userStates[from] = { menu: 'initial', menuShown: false };
+       userStates[from] = { menu: 'initial', menuShown: false };
       await handleInitialMenu(client, from);
       return; // Adicionando return para evitar continuar o processamento
     default:
@@ -174,6 +174,7 @@ export async function handleInitialMenu(client: Client, from: string) {
     await client.sendMessage(from, initialMenu);
     userStates[from].menuShown = true; // Definir o flag como verdadeiro após mostrar o menu
   }
+
 }
 
 export async function processMenuSelection(client: Client, from: string, body: string) {
@@ -183,8 +184,7 @@ export async function processMenuSelection(client: Client, from: string, body: s
       await client.sendMessage(from, recarregamentoMessage);
     } else if (body === '2' || body.toLowerCase() === 'suporte') {
       await client.sendMessage(from, menuMessage);
-      userStates[from].menu = 'support'; // Mudar o estado do menu para suporte
-      userStates[from].menuShown = true; // Garantir que o menu foi mostrado
+      userStates[from] = { menu: 'support', menuShown: true };
     } else {
       // Se a entrada não for válida, mostrar novamente o menu inicial
       await client.sendMessage(from, 'Opção inválida. Por favor, escolha uma opção do menu enviando o número correspondente. ❌');
