@@ -17,7 +17,7 @@ const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
     args: ["--no-sandbox"],
-    headless: true,
+    headless: false,
   },
   webVersionCache: {
     type: "remote",
@@ -54,18 +54,18 @@ client.on("message", async msg => {
     const processor = getProcessor(message);
    if (!processor) {
   // Inicializar o estado do usuário, se não estiver definido
-  if (!userStates[senderID]) {
-   // userStates[senderID] = { menu: 'initial', menuShown: false };
-  }
+  // if (!userStates[senderID]) {
+  //  // userStates[senderID] = { menu: 'initial', menuShown: false };
+  // }
 
-  // Verificar se o menu inicial deve ser mostrado
-  if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
-    // await handleInitialMenu(client, senderID);
-  } else {
-    // Processar a opção selecionada pelo usuário
-    //ola
-    // await processMenuSelection(client, senderID, message);
-  }
+  // // Verificar se o menu inicial deve ser mostrado
+  // if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
+  //   // await handleInitialMenu(client, senderID);
+  // } else {
+  //   // Processar a opção selecionada pelo usuário
+  //   //ola
+  //   // await processMenuSelection(client, senderID, message);
+  // }
 
   return;
 }
