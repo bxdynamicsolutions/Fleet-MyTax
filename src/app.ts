@@ -78,8 +78,8 @@ client.on("message", async msg => {
     if (!result.success) logger.error(result.error);
 
     if (!result.success || transaction.contact === 'N/A') {
-      const errorMessage =
-        `Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:\n\n${processor.getExampleMessage()}\n\nPor favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga. Caso o problema persista, a recarga pode ter sido usada ou adulterada! Em caso de dúvidas, entre em contacto com o suporte!`.trimStart();
+      // const errorMessage =`Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:\n\n${processor.getExampleMessage()}\n\nPor favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga. Caso o problema persista, a recarga pode ter sido usada ou adulterada! Em caso de dúvidas, entre em contacto com o suporte!`.trimStart();
+      const errorMessage = 'Por favor, certifique-se de copiar a mensagem de confirmação exactamente como fornecido e adicionar o numero de cellular associado a conta Yango no fim do corpo da mensagem para o recarregamento!';
       logger.info(errorMessage);
       msg.reply(errorMessage);
       return;
