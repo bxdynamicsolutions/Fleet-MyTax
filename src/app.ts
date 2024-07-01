@@ -17,7 +17,7 @@ const client = new Client({
   authStrategy: new LocalAuth(),
   puppeteer: {
     args: ["--no-sandbox"],
-    headless: false,
+    headless: true,
   },
   webVersionCache: {
     type: "remote",
