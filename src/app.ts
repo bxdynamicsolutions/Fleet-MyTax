@@ -111,7 +111,17 @@ client.on("message", async msg => {
   // }
 
   return;
+
+  
   }
+
+   //Se o comprovativo for SIMO Não recarregar
+   if (/SIMO/i.test(message)) { // Regex para verificar se a mensagem contém "SIMO"
+    const SimoError = "Transferências SIMO não são permitidas. Por favor, utilize um método de transferência compatível (M-Pesa para M-Pesa ou e-Mola para e-Mola).";
+    enviarMensagemComAtraso(msg, SimoError);
+    return;
+  }
+
 
     const transaction = processor.process(message);
 
@@ -122,7 +132,7 @@ client.on("message", async msg => {
 
     if (!result.success || transaction.contact === 'N/A') {
       // const errorMessage =`Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o contato para o recarregamento conforme o exemplo abaixo:\n\n${processor.getExampleMessage()}\n\nPor favor, reenvie a mensagem corretamente seguindo o formato acima para completar o processo de recarga. Caso o problema persista, a recarga pode ter sido usada ou adulterada! Em caso de dúvidas, entre em contacto com o suporte!`.trimStart();
-      const errorMessage = selecionarMensagemDeErroAleatoria();
+      const errorMessage = result.error || selecionarMensagemDeErroAleatoria();
       logger.info(errorMessage);
       //Chamar o metodo para enviar a mensagem com algum Erro
       enviarMensagemComAtraso(msg, errorMessage);

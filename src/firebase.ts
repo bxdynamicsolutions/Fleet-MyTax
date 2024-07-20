@@ -14,24 +14,42 @@ export async function markTransactionAsCompleted({ id, contact }: Transaction): 
   await update(firebaseRef, updatedData);
 }
 
-export async function validateTransaction({ amount, contact, date, id }: Transaction): Promise<Result> {
+export async function validateTransaction({ amount, contact, date, id }: Transaction): Promise<{ success: boolean; error?: string }> {
   try {
-    const firebaseRef = ref(database, id + "/" + id);
+    const firebaseRef = ref(database, `${id}/${id}`);
     const snapshot = await get(firebaseRef);
+
+    if (!snapshot.exists()) {
+      logger.info(`Transaction not found: ${JSON.stringify({ amount, contact, date, id })}`);
+      return { success: false, error: "A mensagem de confirmação da operadora não foi recebida. Por favor, verifique se a mensagem foi copiada corretamente. Se o problema persistir, entre em contato com o Suporte." };
+    }
+
+    const transactionData = snapshot.val();
+
+    // Verificação se a recarga já foi usada
+    if (transactionData.estado.toString() === "true") {
+      logger.info(`Transaction already used: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(transactionData)}`);
+      return { success: false, error: `A recarga já foi usada pelo: ${transactionData.contacto}` };
+    }
+
+    // Verificação se o valor da recarga é menor que 100 MZN
+    if (transactionData.valorRecarga < 100) {
+      logger.info(`Amount less than 100: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(transactionData)}`);
+      return { success: false, error: "O valor mínimo de recarregamento é de 100 MZN. A MyTaxi não se responsabiliza por valores abaixo deste." };
+    }
+
+    // Verificação se a transação é válida
     const isValidTransaction =
-      snapshot.exists() &&
-      snapshot.val().dataRecarga == date &&
-      snapshot.val().valorRecarga == Math.floor(amount) &&
-      snapshot.val().idTransacao.replace(/\./g, "_") == id &&
-      snapshot.val().estado.toString() === "false" &&
-      snapshot.val().valorRecarga >= 100;
+      transactionData.dataRecarga == date &&
+      transactionData.valorRecarga == Math.floor(amount) &&
+      transactionData.idTransacao.replace(/\./g, "_") == id &&
+      transactionData.valorRecarga >= 100;
 
     if (!isValidTransaction) {
-      logger.info(
-        `Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(snapshot.val())}`,
-      );
-      return { success: false, error: "Transacção inválida" };
+      logger.info(`Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(transactionData)}`);
+      return { success: false, error: "A mensagem de confirmação da operadora não foi recebida. Por favor, verifique se a mensagem foi copiada corretamente e tente novamente mais tarde. Se o problema persistir, entre em contato com o Suporte." };
     }
+
     return { success: true };
   } catch (error) {
     logger.error(`Erro ao buscar dados no Firebase: ${error}`);
@@ -39,12 +57,3 @@ export async function validateTransaction({ amount, contact, date, id }: Transac
     return { success: false, error: e.message };
   }
 }
-
-type Result =
-  | {
-      success: true;
-    }
-  | {
-      success: false;
-      error: string;
-    };
