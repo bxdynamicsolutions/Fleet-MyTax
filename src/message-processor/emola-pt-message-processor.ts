@@ -1,3 +1,4 @@
+import { logger } from "@/config/logger";
 import { MessageProcessor, Transaction } from "./message-processor";
 
 export class EmolaPtMessageProcessor implements MessageProcessor {
@@ -7,14 +8,23 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
 
     const padraoValor = /\b(\d+(?:\.\d{1,2})?)\s*MT\b/;
     const matcherValor = mensagem.match(padraoValor);
-    const padraoHoraData = /as (\d{1,2}:\d{2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2,4})/;
-    const matcherHoraData = mensagem.match(padraoHoraData);
+      const padraoHoraData = /as (\d{2}:\d{2}:\d{2})(?: de)? (\d{2}\/\d{2}\/\d{4})/;
+      const matcherHoraData = mensagem.match(padraoHoraData);
+      let dataRecarga = "none"; // Data padrão, caso não seja encontrado
+
+    if (matcherHoraData) {
+        const hora = matcherHoraData[1]; // Captura a hora
+        const data = matcherHoraData[2]; // Captura a data
+        dataRecarga = `${hora} ${data}`; // Formata a data e hora
+    }
+
+    logger.info("Leiaaa"+dataRecarga);
+
     const contatoMatch = /\s*(\d{9})\s*$/;
     const matcherContato = mensagem.match(contatoMatch);
 
     const id = matcherIdTransacao ? matcherIdTransacao[1].replace(/\./g, "_") : "DiversosEmola";
     const valorRecarga = matcherValor ? parseFloat(matcherValor[1]) : 0;
-    const dataRecarga = matcherHoraData ? matcherHoraData[1] : "none";
     const contacto = matcherContato ? matcherContato[1] : "N/A";
 
     return {

@@ -40,10 +40,12 @@ export async function validateTransaction({ amount, contact, date, id }: Transac
 
     // Verificação se a transação é válida
     const isValidTransaction =
-      transactionData.dataRecarga == date &&
+      //transactionData.dataRecarga == date &&
       transactionData.valorRecarga == Math.floor(amount) &&
       transactionData.idTransacao.replace(/\./g, "_") == id &&
       transactionData.valorRecarga >= 100;
+
+      // logger.info("Leia bem: "+ transactionData.dataRecarga +" and "+date);
 
     if (!isValidTransaction) {
       logger.info(`Invalid Transaction: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(transactionData)}`);
