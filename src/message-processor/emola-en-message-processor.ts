@@ -5,7 +5,7 @@ export class EmolaEnMessageProcessor implements MessageProcessor {
     const transactionIdPattern = /Transaction ID ((PP|CI)\d{6}\.\d{4}\.[A-Za-z]\d+)/;
     const matcherIdTransaction = message.match(transactionIdPattern);
 
-    const amountPattern = /\b(\d+(?:\.\d{1,2})?)\s*MT\b/;
+    const amountPattern = /\b(\d*([\d\,]*)\.?\d+)MT\b/;
     const matcherAmount = message.match(amountPattern);
 
     const dateTimePattern = /at (\d{1,2}:\d{2}:\d{2} \d{1,2}\/\d{1,2}\/\d{2,4})/;
@@ -15,15 +15,15 @@ export class EmolaEnMessageProcessor implements MessageProcessor {
     const matcherContact = message.match(contactPattern);
 
     const id = matcherIdTransaction ? matcherIdTransaction[1].replace(/\./g, "_") : "VariousEmola";
-    const amount = matcherAmount ? parseFloat(matcherAmount[1]) : 0;
+    const valorRecarga = matcherAmount ? matcherAmount[1] : "0";
     const date = matcherDateTime ? matcherDateTime[1] : "none";
     const contact = matcherContact ? matcherContact[1] : "N/A";
 
     return {
       id,
-      amount,
-      date,
-      contact,
+      amount: Number(valorRecarga.replace(",", "")),
+      date: date,
+      contact: contact,
     };
   }
 

@@ -12,6 +12,7 @@ import { UserState } from './types/types';
 
 
 import qrcode from 'qrcode-terminal';
+import { EMOLAOPT } from "./message-processor/Emola-opt-";
 const wwebVersion = "2.2412.54";
 const client = new Client({
   authStrategy: new LocalAuth(),
@@ -62,15 +63,32 @@ const respostasRecarregamento = [
   "Feito com sucesso! Conta está recarregada.",
   "Excelente! Recarga concluída.",
   "Concluído! Recarregamento realizado.",
-  "Muito bem, conta recarregada."
+  "Muito bem, conta recarregada.",
+  "Recarga bem-sucedida!",
+  "Tudo pronto! Conta recarregada.",
+  "Recarga efetuada com sucesso!",
+  "Sua conta foi recarregada com êxito.",
+  "Feito! Agora sua conta está recarregada.",
+  "Conta atualizada com sucesso!",
+  "Parabéns! Recarga concluída.",
+  "Recarga realizada, tudo certo!",
+  "Recarga completa! Conta pronta para uso."
 ];
 
-const errorFormat= [
+
+const errorFormat = [
   'Por favor, certifique-se de copiar a mensagem de confirmação exatamente como fornecido e adicionar o número de celular associado à conta Yango no fim do corpo da mensagem para o Recarregamento!',
   'Certifique-se de incluir corretamente a mensagem de confirmação e o número de celular associado à conta Yango para completar o Recarregamento.',
   'Para completar o Recarregamento, é necessário copiar a mensagem de confirmação exatamente como fornecido e adicionar o número de celular associado à conta Yango no fim do corpo da mensagem.',
-  'Por favor, adicione o número de celular associado à conta Yango no fim do corpo da mensagem de confirmação para finalizar o Recarregamento.'
+  'Por favor, adicione o número de celular associado à conta Yango no fim do corpo da mensagem de confirmação para finalizar o Recarregamento.',
+  'É imprescindível que a mensagem de confirmação seja copiada fielmente e que o número de celular da conta Yango seja adicionado ao final da mensagem.',
+  'A mensagem de confirmação deve ser copiada exatamente como fornecida, com o número de celular Yango adicionado ao final para o Recarregamento.',
+  'Não se esqueça de incluir o número de celular da conta Yango no final da mensagem de confirmação para concluir o Recarregamento.',
+  'Para evitar erros, por favor, adicione o número de celular associado à conta Yango ao final da mensagem de confirmação.',
+  'Assegure-se de que a mensagem de confirmação seja copiada corretamente e que o número de celular Yango esteja incluído no final para proceder com o Recarregamento.',
+  'Para que o Recarregamento seja bem-sucedido, é necessário copiar a mensagem de confirmação exatamente e incluir o número de celular Yango no final.'
 ];
+
 
 const errorGeral = [
   'Ocorreu um erro durante o recarregamento, provavelmente o número que colocou não está associado a nenhuma conta Yango neste parceiro. Por favor, tente novamente! Se o problema persistir, entre em contato com o suporte!',
@@ -95,25 +113,7 @@ client.on("message", async msg => {
     const processor = getProcessor(message);
 
     // Chamar suporte caso a mensagem enviada não seja um comprovativo para recarregamento
-   if (!processor) {
-  // Inicializar o estado do usuário, se não estiver definido
-  // if (!userStates[senderID]) {
-  //  // userStates[senderID] = { menu: 'initial', menuShown: false };
-  // }
-
-  // // Verificar se o menu inicial deve ser mostrado
-  // if (userStates[senderID].menu === 'initial' && !userStates[senderID].menuShown) {
-  //   // await handleInitialMenu(client, senderID);
-  // } else {
-  //   // Processar a opção selecionada pelo usuário
-  //   //ola
-  //   // await processMenuSelection(client, senderID, message);
-  // }
-
-  return;
-
-  
-  }
+   if (!processor) { return; }
 
    //Se o comprovativo for SIMO Não recarregar
    if (/SIMO/i.test(message)) { // Regex para verificar se a mensagem contém "SIMO"
@@ -193,6 +193,8 @@ function getProcessor(message: string): MessageProcessor | null {
     return new MPesaPtMessageProcessor();
   } else if (message.startsWith("B") && message.trim().split(" ")[0].length === 11) {
     return new MPesaEnMessageProcessor();
+  }else if(message.trim().toUpperCase() === "EMOLAOPT"){
+    return new EMOLAOPT();
   }
   return null;
 }

@@ -26,6 +26,11 @@ export async function validateTransaction({ amount, contact, date, id }: Transac
 
     const transactionData = snapshot.val();
 
+    if (transactionData.idTransacao === "Emola") {
+      logger.info(`OPT do EMOLA: ${JSON.stringify(transactionData.mensagem)}`);
+      return { success: false, error: `${transactionData.mensagem}` };
+    }
+
     // Verificação se a recarga já foi usada
     if (transactionData.estado.toString() === "true") {
       logger.info(`Transaction already used: ${JSON.stringify({ amount, contact, date, id })} Snapshot: ${JSON.stringify(transactionData)}`);

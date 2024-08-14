@@ -6,7 +6,7 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
     const padraoIdTransacao = /ID da transacao ((PP|CI)\d{6}\.\d{4}\.[A-Za-z]\d+)/;
     const matcherIdTransacao = mensagem.match(padraoIdTransacao);
 
-    const padraoValor = /\b(\d+(?:\.\d{1,2})?)\s*MT\b/;
+    const padraoValor = /\b(\d*([\d\,]*)\.?\d+)MT\b/; 
     const matcherValor = mensagem.match(padraoValor);
       const padraoHoraData = /as (\d{2}:\d{2}:\d{2})(?: de)? (\d{2}\/\d{2}\/\d{4})/;
       const matcherHoraData = mensagem.match(padraoHoraData);
@@ -14,8 +14,8 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
 
     if (matcherHoraData) {
         const hora = matcherHoraData[1]; // Captura a hora
-        const data = matcherHoraData[2]; // Captura a data
-        dataRecarga = `${hora} ${data}`; // Formata a data e hora
+        const date = matcherHoraData[2]; // Captura a data
+        dataRecarga = `${hora} ${date}`; // Formata a data e hora
     }
 
     logger.info("Leiaaa"+dataRecarga);
@@ -24,14 +24,14 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
     const matcherContato = mensagem.match(contatoMatch);
 
     const id = matcherIdTransacao ? matcherIdTransacao[1].replace(/\./g, "_") : "DiversosEmola";
-    const valorRecarga = matcherValor ? parseFloat(matcherValor[1]) : 0;
-    const contacto = matcherContato ? matcherContato[1] : "N/A";
+    const valorRecarga = matcherValor ? matcherValor[1] : "0";
+    const contact = matcherContato ? matcherContato[1] : "N/A";
 
     return {
       id,
-      amount: Number(valorRecarga),
+      amount: Number(valorRecarga.replace(",", "")),
       date: dataRecarga,
-      contact: contacto,
+      contact: contact,
     };
   }
 
