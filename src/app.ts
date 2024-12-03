@@ -60,19 +60,43 @@ const respostasRecarregamento = [
   "Obrigado! Conta recarregada.",
   "Pronto para uso! Recarga completa.",
   "Operação realizada com sucesso!",
-  "Feito com sucesso! Conta está recarregada.",
-  "Excelente! Recarga concluída.",
-  "Concluído! Recarregamento realizado.",
-  "Muito bem, conta recarregada.",
-  "Recarga bem-sucedida!",
-  "Tudo pronto! Conta recarregada.",
-  "Recarga efetuada com sucesso!",
-  "Sua conta foi recarregada com êxito.",
-  "Feito! Agora sua conta está recarregada.",
-  "Conta atualizada com sucesso!",
-  "Parabéns! Recarga concluída.",
-  "Recarga realizada, tudo certo!",
-  "Recarga completa! Conta pronta para uso."
+  // "Feito com sucesso! Conta está recarregada.",
+  // "Excelente! Recarga concluída.",
+  // "Concluído! Recarregamento realizado.",
+  // "Muito bem, conta recarregada.",
+  // "Recarga bem-sucedida!",
+  // "Tudo pronto! Conta recarregada.",
+  // "Recarga efetuada com sucesso!",
+  // "Sua conta foi recarregada com êxito.",
+  // "Feito! Agora sua conta está recarregada.",
+  // "Conta atualizada com sucesso!",
+  // "Parabéns! Recarga concluída.",
+  // "Recarga realizada, tudo certo!",
+  // "Recarga completa! Conta pronta para uso.",
+
+  // Novas respostas adicionadas
+  "Recarga finalizada! Sua conta está pronta.",
+  "Recarga concluída com sucesso. Aproveite!",
+  "Tudo certo! A recarga foi realizada.",
+  "Recarga efetuada com sucesso. Boa utilização!",
+  "Sucesso! O saldo foi atualizado.",
+  "Pronto! Recarga completada e conta ativa.",
+  "Tudo pronto! A recarga foi concluída.",
+  "Recarga feita com êxito, aproveite!",
+  "Sua conta foi recarregada com sucesso, pode usar.",
+  "Recarga finalizada! Agora sua conta está ativa.",
+  "Recarga realizada com sucesso. Obrigado!",
+  "A recarga foi processada corretamente, boa utilização!",
+  "Tudo certo! Seu saldo foi recarregado com sucesso.",
+  "Recarga efetuada, sua conta agora está pronta!",
+  "Processo concluído com êxito! Sua conta está recarregada.",
+  "Recarga realizada! Sua conta está pronta para uso.",
+  "Recarga completada com sucesso! Agora você pode utilizar.",
+  "Recarga processada, aproveite os benefícios!",
+  "Tudo pronto para uso! Recarga finalizada com sucesso.",
+  "Recarga concluída, sua conta está atualizada.",
+  "Operação concluída! Recarga bem-sucedida."
+  
 ];
 
 
@@ -121,6 +145,16 @@ client.on("message", async msg => {
     enviarMensagemComAtraso(msg, SimoError);
     return;
   }
+
+   //Se o comprovativo for Mpsa der erro e informar 
+   if (/(Confirmado|Confirmed)/i.test(message)) { 
+    // A mensagem começa com "Conformado" ou "Confirmed"
+    const MpsaIndisponivel = "O sistema Mpesa não está mais disponível por esse método de recarregamento. Apenas o E-mola. Quem desejar o Mpesa poderá usar a recarga do aplicativo. Este método será válido apenas para o E-Mola.";
+    
+    // Envia a mensagem com atraso
+    enviarMensagemComAtraso(msg, MpsaIndisponivel);
+    return;
+}
 
 
     const transaction = processor.process(message);
