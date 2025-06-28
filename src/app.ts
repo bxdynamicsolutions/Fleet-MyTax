@@ -141,7 +141,7 @@ client.on("message", async msg => {
 
    //Se o comprovativo for SIMO Não recarregar
    if (/SIMO/i.test(message)) { // Regex para verificar se a mensagem contém "SIMO"
-    const SimoError = "Transferências SIMO não são permitidas. Por favor, utilize um método de transferência compatível (M-Pesa para M-Pesa ou e-Mola para e-Mola).";
+    const SimoError = "Transferências SIMO não são permitidas. Por favor, utilize um método de transferência compatível (e-Mola para e-Mola).";
     enviarMensagemComAtraso(msg, SimoError);
     return;
   }
