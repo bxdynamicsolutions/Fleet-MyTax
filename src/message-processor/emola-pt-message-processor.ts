@@ -18,8 +18,6 @@ export class EmolaPtMessageProcessor implements MessageProcessor {
         dataRecarga = `${hora} ${date}`; // Formata a data e hora
     }
 
-    logger.info("Leiaaa"+dataRecarga);
-
     const contatoMatch = /\s*(\d{9})\s*$/;
     const matcherContato = mensagem.match(contatoMatch);
 
